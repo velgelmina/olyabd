@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лист персонажа: Оля Кузнецова</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Philosopher:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Philosopher', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Звёздный фон */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .character-sheet {
+            background: linear-gradient(145deg, rgba(30, 30, 60, 0.95), rgba(20, 20, 40, 0.95));
+            border: 3px solid #d4af37;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 30px;
+        }
+        
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3em;
+            color: #d4af37;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.3em;
+            color: #a8dadc;
+            margin: 10px 0;
+        }
+        
+        .level-up {
+            display: inline-block;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            color: #1a1a2e;
+            padding: 10px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-top: 15px;
+            animation: pulse 2s infinite;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .info-box {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid #d4af37;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+        
+        .label {
+            color: #d4af37;
+            font-weight: bold;
+        }
+        
+        h2 {
+            font-family: 'Cinzel', serif;
+            color: #d4af37;
+            font-size: 2em;
+            margin: 30px 0 20px 0;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat {
+            background: rgba(168, 218, 220, 0.1);
+            border: 2px solid #a8dadc;
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(168, 218, 220, 0.3);
+        }
+        
+        .stat-name {
+            font-size: 1.3em;
+            color: #a8dadc;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            color: #ffd700;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .stat-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            width: 100%;
+            animation: fillBar 2s ease-out;
+        }
+        
+        @keyframes fillBar {
+            from { width: 0; }
+        }
+        
+        .stat-description {
+            font-size: 0.9em;
+            color: #ccc;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .achievements {
+            margin: 30px 0;
+        }
+        
+        .achievement {
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+            border-left: 5px solid #d4af37;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+        
+        .achievement:hover {
+            transform: translateX(10px);
+        }
+        
+        .achievement-icon {
+            font-size: 2em;
+            margin-right: 15px;
+            display: inline-block;
+        }
+        
+        .achievement-title {
+            font-size: 1.3em;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .achievement-desc {
+            margin-top: 5px;
+            color: #ccc;
+        }
+        
+        .buffs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .buff {
+            background: rgba(144, 238, 144, 0.1);
+            border: 2px solid #90ee90;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .buff:hover {
+            background: rgba(144, 238, 144, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .buff-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .buff-name {
+            color: #90ee90;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .buff-effect {
+            color: #ccc;
+            font-size: 0.9em;
+        }
+        
+        .equipment {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .item {
+            background: rgba(138, 43, 226, 0.1);
+            border: 2px solid #8a2be2;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .item-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .item-name {
+            color: #8a2be2;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .item-bonus {
+            color: #90ee90;
+            font-size: 0.9em;
+        }
+        
+        .dice-section {
+            text-align: center;
+            margin: 40px 0;
+            padding: 40px;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 15px;
+        }
+        
+        .dice-button {
+            background: linear-gradient(145deg, #d4af37, #ffd700);
+            color: #1a1a2e;
+            border: none;
+            padding: 20px 50px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cinzel', serif;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+        }
+        
+        .dice-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.6);
+        }
+        
+        .dice-button:active {
+            transform: translateY(-2px);
+        }
+        
+        .dice-result {
+            margin-top: 30px;
+            font-size: 3em;
+            color: #ffd700;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .dice-result.show {
+            opacity: 1;
+            animation: celebrate 1s ease-out;
+        }
+        
+        @keyframes celebrate {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #a8dadc;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .message.show {
+            opacity: 1;
+        }
+        
+        .quests {
+            margin: 30px 0;
+        }
+        
+        .quest {
+            background: rgba(168, 218, 220, 0.1);
+            border: 2px solid #a8dadc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .quest-check {
+            font-size: 1.5em;
+            margin-right: 15px;
+            color: #90ee90;
+        }
+        
+        .final-message {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(138, 43, 226, 0.2));
+            border: 3px solid #d4af37;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 40px 0;
+            text-align: center;
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #f5f5f5;
+        }
+        
+        .abilities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .ability {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .ability-name {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        .ability-desc {
+            color: #ccc;
+            font-size: 0.95em;
+        }
+        
+        /* Конфетти */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            position: absolute;
+            animation: confetti-fall 3s linear;
+        }
+        
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <div class="character-sheet">
+            <div class="header">
+                <h1>⚔️ ЛИСТ ПЕРСОНАЖА ⚔️</h1>
+                <div class="subtitle">Легендарный Руководитель</div>
+                <div class="subtitle">🎂 С днём рождения! 🎂</div>
+                <div class="level-up">LEVEL UP! 32 → 33 🎉</div>
+            </div>
+            
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="label">Имя персонажа:</span>
+                    <span>Оля Кузнецова</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Класс:</span>
+                    <span>Юрист-Коуч</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Подкласс:</span>
+                    <span>Хранитель Инфобизнеса</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Локация:</span>
+                    <span>Таррагона, Испания</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Дата рождения:</span>
+                    <span>7 января 1993</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Мировоззрение:</span>
+                    <span>Lawful Wise (Законно-Мудрая)</span>
+                </div>
+            </div>
+            
+            <h2>📊 ХАРАКТЕРИСТИКИ</h2>
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-name">💚 Эмпатия</div>
+                    <div class="stat-value">20/20</div>
+                    <div class="stat-bar"><div class="stat-bar-fill"></div></div>
+                    <div class="stat-description">Легендарный уровень! Чувствует команду сердцем</div>
+                </div>
+                
+                <div class="stat">
+                    <div class="stat-name">🧘‍♀️ Спокойствие</div>
+                    <div class="stat-value">20/20</div>
+                    <div class="stat-bar"><div class="stat-bar-fill"></div></div>
+                    <div class="stat-description">Даже в дедлайн остаётся непоколибимой</div>
+                </div>
+                
+                <div class="stat">
+                    <div class="stat-name">🎤 Харизма спикера</div>
+                    <div class="stat-value">19/20</div>
+                    <div class="stat-bar"><div class="stat-bar-fill"></div></div>
+                    <div class="stat-description">Публичные выступления боялись ее</div>
+                </div>
+                
+                <div class="stat">
+                    <div class="stat-name">🔮 Мудрость звёзд</div>
+                    <div class="stat-value">20/20</div>
+                    <div class="stat-bar"><div class="stat-bar-fill"></div></div>
+                    <div class="stat-description">Звезды шепчут правильные решения</div>
+                </div>
+                
+                <div class="stat">
+                    <div class="stat-name">👨‍👦 Материнская сила</div>
+                    <div class="stat-value">20/20</div>
+                    <div class="stat-bar"><div class="stat-bar-fill"></div></div>
+                    <div class="stat-description">Бонус от квеста "Мама Дани, 5 lvl"</div>
+                </div>
+                
+                <div class="stat">
+                    <div class="stat-name">🔍 Интеллект детектива</div>
+                    <div class="stat-value">19/20</div>
+                    <div class="stat-bar"><div class="stat-bar-fill"></div></div>
+                    <div class="stat-description">Раскрывает юридические головоломки</div>
+                </div>
+                
+                <div class="stat">
+                    <div class="stat-name">📚 Литературная магия</div>
+                    <div class="stat-value">18/20</div>
+                    <div class="stat-bar"><div class="stat-bar-fill"></div></div>
+                    <div class="stat-description">Восстанавливает ману через чтение</div>
+                </div>
+            </div>
+            
+            <h2>🏆 ЛЕГЕНДАРНЫЕ ДОСТИЖЕНИЯ 2025</h2>
+            <div class="achievements">
+                <div class="achievement">
+                    <span class="achievement-icon">📱</span>
+                    <div style="display: inline-block; vertical-align: top;">
+                        <div class="achievement-title">Покоритель телеграма</div>
+                        <div class="achievement-desc">Канал вырос до новых высот! Достижение редкости: EPIC</div>
+                    </div>
+                </div>
+                
+                <div class="achievement">
+                    <span class="achievement-icon">📜</span>
+                    <div style="display: inline-block; vertical-align: top;">
+                        <div class="achievement-title">Мастер Договоров</div>
+                        <div class="achievement-desc">Составлено бесчисленное множество оферт и договоров</div>
+                    </div>
+                </div>
+                
+                <div class="achievement">
+                    <span class="achievement-icon">™️</span>
+                    <div style="display: inline-block; vertical-align: top;">
+                        <div class="achievement-title">Собиратель Товарных Знаков</div>
+                        <div class="achievement-desc">С Роспатентом на "ты"</div>
+                    </div>
+                </div>
+                
+                <div class="achievement">
+                    <span class="achievement-icon">🎤</span>
+                    <div style="display: inline-block; vertical-align: top;">
+                        <div class="achievement-title">Голос эфиров</div>
+                        <div class="achievement-desc">Покорила аудиторию своим спокойствием и знаниями</div>
+                    </div>
+                </div>
+                
+                <div class="achievement">
+                    <span class="achievement-icon">🌊</span>
+                    <div style="display: inline-block; vertical-align: top;">
+                        <div class="achievement-title">Око Бури</div>
+                        <div class="achievement-desc">Сохраняла спокойствие в любом предпринимательском хаосе</div>
+                    </div>
+                </div>
+                
+                <div class="achievement">
+                    <span class="achievement-icon">🇪🇸</span>
+                    <div style="display: inline-block; vertical-align: top;">
+                        <div class="achievement-title">Испанская Одиссея</div>
+                        <div class="achievement-desc">Мастерски управляет жизнью в эмиграции</div>
+                    </div>
+                </div>
+                
+                <div class="achievement">
+                    <span class="achievement-icon">👨‍👦</span>
+                    <div style="display: inline-block; vertical-align: top;">
+                        <div class="achievement-title">Героическое Материнство</div>
+                        <div class="achievement-desc">Растит будущего героя (Даня, 5 уровень!)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>✨ АКТИВНЫЕ БАФФЫ НА 2026</h2>
+            <div class="buffs">
+                <div class="buff">
+                    <div class="buff-icon">✨</div>
+                    <div class="buff-name">Звёздная Стабильность</div>
+                    <div class="buff-effect">Всё идёт плавно и предсказуемо</div>
+                </div>
+                
+                <div class="buff">
+                    <div class="buff-icon">📈</div>
+                    <div class="buff-name">Экспоненциальный Рост</div>
+                    <div class="buff-effect">Бизнес и доход растут естественно</div>
+                </div>
+                
+                <div class="buff">
+                    <div class="buff-icon">🧘‍♀️</div>
+                    <div class="buff-name">Аура Спокойствия</div>
+                    <div class="buff-effect">Никакой хаос не потревожит</div>
+                </div>
+                
+                <div class="buff">
+                    <div class="buff-icon">💰</div>
+                    <div class="buff-name">Благословение Изобилия</div>
+                    <div class="buff-effect">Финансовый поток усиливается</div>
+                </div>
+                
+                <div class="buff">
+                    <div class="buff-icon">🌟</div>
+                    <div class="buff-name">Космическая благосклонность</div>
+                    <div class="buff-effect">Все планеты за тебя!</div>
+                </div>
+                
+                <div class="buff">
+                    <div class="buff-icon">📱</div>
+                    <div class="buff-name">Telegramius Momentum</div>
+                    <div class="buff-effect">Соцсети растут и привлекают клиентов</div>
+                </div>
+                
+                <div class="buff">
+                    <div class="buff-icon">☀️</div>
+                    <div class="buff-name">Средиземноморская Гармония</div>
+                    <div class="buff-effect">Баланс работы и жизни</div>
+                </div>
+                
+                <div class="buff">
+                    <div class="buff-icon">🎂</div>
+                    <div class="buff-name">День Рождения</div>
+                    <div class="buff-effect">+100% к удаче на весь год!</div>
+                </div>
+            </div>
+            
+            <h2>⚔️ ОСОБЫЕ СПОСОБНОСТИ</h2>
+            <div class="abilities">
+                <div class="ability">
+                    <div class="ability-name">🔍 Детективная Интуиция</div>
+                    <div class="ability-desc">Видит юридические риски за километр</div>
+                </div>
+                
+                <div class="ability">
+                    <div class="ability-name">🧘‍♀️ Спокойствие Мудреца</div>
+                    <div class="ability-desc">Passive ability, всегда активна</div>
+                </div>
+                
+                <div class="ability">
+                    <div class="ability-name">💚 Коучинговая Эмпатия</div>
+                    <div class="ability-desc">Помогает людям расти и раскрываться</div>
+                </div>
+                
+                <div class="ability">
+                    <div class="ability-name">🎲 НРИ-Мастер</div>
+                    <div class="ability-desc">Понимает, что жизнь - это игра с правилами</div>
+                </div>
+            </div>
+            
+            <h2>🎒 СНАРЯЖЕНИЕ</h2>
+            <div class="equipment">
+                <div class="item">
+                    <div class="item-icon">📱</div>
+                    <div class="item-name">Легендарный Telegram</div>
+                    <div class="item-bonus">+500 к охвату</div>
+                </div>
+                
+                <div class="item">
+                    <div class="item-icon">📜</div>
+                    <div class="item-name">Идеальная Оферта</div>
+                    <div class="item-bonus">Не требует правок</div>
+                </div>
+                
+                <div class="item">
+                    <div class="item-icon">™️</div>
+                    <div class="item-name">Печать Роспатента</div>
+                    <div class="item-bonus">Мгновенная регистрация</div>
+                </div>
+                
+                <div class="item">
+                    <div class="item-icon">🎤</div>
+                    <div class="item-name">Микрофон Харизмы</div>
+                    <div class="item-bonus">+100 убедительность</div>
+                </div>
+                
+                <div class="item">
+                    <div class="item-icon">☕</div>
+                    <div class="item-name">Испанский Кофе</div>
+                    <div class="item-bonus">Бесконечная энергия</div>
+                </div>
+                
+                <div class="item">
+                    <div class="item-icon">📚</div>
+                    <div class="item-name">Библиотека Мудрости</div>
+                    <div class="item-bonus">Восстановление 100% маны</div>
+                </div>
+                
+                <div class="item">
+                    <div class="item-icon">🔮</div>
+                    <div class="item-name">Астрологическая Карта</div>
+                    <div class="item-bonus">Лучшие решения</div>
+                </div>
+                
+                <div class="item">
+                    <div class="item-icon">👨‍👦</div>
+                    <div class="item-name">Амулет "Сердце Мамы"</div>
+                    <div class="item-bonus">Бесконечная любовь</div>
+                </div>
+            </div>
+            
+            <h2>🎲 БРОСОК НА УДАЧУ В 2026!</h2>
+            <div class="dice-section">
+                <button class="dice-button" onclick="rollDice()">🎲 БРОСИТЬ d20 🎲</button>
+                <div class="dice-result" id="diceResult"></div>
+                <div class="message" id="message"></div>
+            </div>
+            
+            <h2>📋 КВЕСТОВЫЕ ЦЕЛИ НА 2026</h2>
+            <div class="quests">
+                <div style="text-align: center; margin-bottom: 20px; font-size: 1.2em; color: #d4af37;">
+                    <strong>Главный квест: "Год стабильности и процветания"</strong>
+                </div>
+                
+                <div class="quest">
+                    <span class="quest-check">✅</span>
+                    <span>Стабильный рост бизнеса</span>
+                </div>
+                
+                <div class="quest">
+                    <span class="quest-check">✅</span>
+                    <span>Увеличение дохода</span>
+                </div>
+                
+                <div class="quest">
+                    <span class="quest-check">✅</span>
+                    <span>Спокойствие в работе</span>
+                </div>
+                
+                <div class="quest">
+                    <span class="quest-check">✅</span>
+                    <span>Баланс жизни и работы в солнечной Испании</span>
+                </div>
+                
+                <div class="quest">
+                    <span class="quest-check">✅</span>
+                    <span>Продолжение покорения соцсетей</span>
+                </div>
+                
+                <div class="quest">
+                    <span class="quest-check">✅</span>
+                    <span>Ещё больше успешных эфиров и коллабораций</span>
+                </div>
+                
+                <div class="quest">
+                    <span class="quest-check">✅</span>
+                    <span>Счастливое материнство</span>
+                </div>
+            </div>
+            
+            <div class="final-message">
+                🎉 <strong>Поздравляем с повышением уровня и днём рождения!</strong> 🎉
+                <br><br>
+                В 2026 году пусть все звёзды выстроятся в твою пользу, бизнес растёт стабильно, 
+                доход радует, а самое главное пусть ничего не выводит тебя из равновесия.  
+                <br><br>
+                Ты уже доказала, что можешь всё - теперь пусть всё даётся легко и с удовольствием!
+                <br><br>
+                <strong style="color: #d4af37; font-size: 1.3em;">С днём рождения, Оля! 🎂✨</strong>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Создаём звёзды
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // Функция броска кубика
+        function rollDice() {
+            const resultDiv = document.getElementById('diceResult');
+            const messageDiv = document.getElementById('message');
+            const button = document.querySelector('.dice-button');
+            
+            // Убираем предыдущий результат
+            resultDiv.classList.remove('show');
+            messageDiv.classList.remove('show');
+            
+            // Анимация кнопки
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Показываем результат через небольшую задержку
+            setTimeout(() => {
+                resultDiv.innerHTML = '🎲 NATURAL 20! 🎲';
+                resultDiv.classList.add('show');
+                
+                // Создаём конфетти
+                createConfetti();
+                
+                setTimeout(() => {
+                    messageDiv.innerHTML = '⭐ КРИТИЧЕСКИЙ УСПЕХ! ⭐<br>2026 будет твоим годом стабильности, роста и спокойствия!';
+                    messageDiv.classList.add('show');
+                }, 500);
+            }, 300);
+        }
+        
+        // Функция создания конфетти
+        function createConfetti() {
+            const colors = ['#ffd700', '#d4af37', '#a8dadc', '#90ee90', '#8a2be2', '#ff69b4'];
+            const confettiCount = 50;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = '-10px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(confetti);
+                
+                // Удаляем конфетти после анимации
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3500);
+            }
+        }
+        
+        // Инициализация при загрузке страницы
+        window.onload = function() {
+            createStars();
+        };
+    </script>
+</body>
+</html>
